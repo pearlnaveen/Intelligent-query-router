@@ -1,0 +1,6 @@
+Error
+    at Query.run (/var/www/html/erp.nec.edu.in/ReactAppsBackend/imsbackend/node_modules/sequelize/src/dialects/mysql/query.js:46:25)
+    at <anonymous> (/var/www/html/erp.nec.edu.in/ReactAppsBackend/imsbackend/node_modules/sequelize/src/sequelize.js:650:28)
+    at async MySQLQueryInterface.select (/var/www/html/erp.nec.edu.in/ReactAppsBackend/imsbackend/node_modules/sequelize/src/dialects/abstract/query-interface.js:1001:12)
+    at async Function.findAll (/var/www/html/erp.nec.edu.in/ReactAppsBackend/imsbackend/node_modules/sequelize/src/model.js:1824:21)
+    at async getAllProjectMentors (file:///var/www/html/erp.nec.edu.in/ReactAppsBackend/imsbackend/controllers/staff/projectMentorController.js:70:21)
