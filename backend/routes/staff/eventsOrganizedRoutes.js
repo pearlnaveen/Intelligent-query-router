@@ -1,0 +1,58 @@
+import express from 'express';
+import {
+    getAllOrganized,
+    getOrganizedById,
+    createOrganized,
+    updateOrganized,
+    patchOrganized,
+    deleteOrganized,
+    getFile,
+    validateOrganizedInfo,
+    bulkCreateEventsOrganized
+} from '../../controllers/staff/eventsOrganizedController.js';
+import { authenticate } from '../../middlewares/requireauth.js';
+import multer from 'multer';
+
+const memoryUpload = multer({
+    storage: multer.memoryStorage(),
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only PDF files are allowed'), false);
+        }
+    },
+    limits: {
+        fileSize: 10 * 1024 * 1024
+    }
+});
+
+const bulkUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 50 * 1024 * 1024 }
+});
+
+const router = express.Router();
+
+router.use(authenticate);
+
+router.get('/', getAllOrganized);
+router.get('/proof/:id', (req, res, next) => { req.params.type = 'proof'; getFile(req, res, next); });
+router.get('/documentation/:id', (req, res, next) => { req.params.type = 'documentation'; getFile(req, res, next); });
+router.get('/:id/proof', (req, res, next) => { req.params.type = 'proof'; getFile(req, res, next); });
+router.get('/:id/documentation', (req, res, next) => { req.params.type = 'documentation'; getFile(req, res, next); });
+router.get('/:id/file/:type', getFile);
+router.get('/:id', getOrganizedById);
+router.post('/bulk', bulkUpload.any(), bulkCreateEventsOrganized);
+
+const uploadFields = memoryUpload.fields([
+    { name: 'proof', maxCount: 1 },
+    { name: 'documentation', maxCount: 1 }
+]);
+
+router.post('/', uploadFields, validateOrganizedInfo, createOrganized);
+router.put('/:id', uploadFields, updateOrganized);
+router.patch('/:id', uploadFields, patchOrganized);
+router.delete('/:id', deleteOrganized);
+
+export default router;
